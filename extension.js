@@ -1,38 +1,88 @@
-const panelConfig = {
-  tabTitle: "Test Ext 1",
-  settings: [
-      {id:          "button-setting",
-       name:        "Button test",
-       description: "tests the button",
-       action:      {type:    "button",
-                     onClick: (evt) => { console.log("Button clicked!"); },
-                     content: "Button"}},
-      {id:          "switch-setting",
-       name:        "Switch Test",
-       description: "Test switch component",
-       action:      {type:     "switch",
-                     onChange: (evt) => { console.log("Switch!", evt); }}},
-      {id:     "input-setting",
-       name:   "Input test",
-       action: {type:        "input",
-                placeholder: "placeholder",
-                onChange:    (evt) => { console.log("Input Changed!", evt); }}},
-      {id:     "select-setting",
-       name:   "Select test",
-       action: {type:     "select",
-                items:    ["one", "two", "three"],
-                onChange: (evt) => { console.log("Select Changed!", evt); }}}
-  ]
-};
 
 async function onload({extensionAPI}) {
-  // set defaults if they dont' exist
-  if (!extensionAPI.settings.get('data')) {
-      await extensionAPI.settings.set('data', "01");
-  }
-  extensionAPI.settings.panel.create(panelConfig);
+  extensionAPI.ui.commandPalette.addCommand({label: 'Toggle Numbered List', 
+               callback: () => {
+                let block = window.roamAlphaAPI.ui.getFocusedBlock()
+                
+                // check if a block is focused
+                if (block !=null) {
+                  let uid = block['block-uid'];
+                  let viewType = window.roamAlphaAPI.data.pull("[:children/view-type]", [":block/uid", uid])[':children/view-type']
+                  if (viewType==':numbered') {
+                    window.roamAlphaAPI.updateBlock(
+                      {"block": 
+                        {"uid": uid,
+                        "children-view-type": "bullet"}})
+                  } else {
+                    window.roamAlphaAPI.updateBlock(
+                      {"block": 
+                        {"uid": uid,
+                        "children-view-type": "numbered"}})
+                  }
+                }
+                
+                },
+               "disable-hotkey": false,
+               // this is the default hotkey, and can be customized by the user. 
+               // in most cases, you DO NOT want to be setting a default hotkey
+               "default-hotkey": "ctrl-shift-1"})
+  // left justify
+  extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block - Left ', 
+    callback: () => {
+      let block = window.roamAlphaAPI.ui.getFocusedBlock()
+      // check if a block is focused
+      if (block !=null) {
+        let uid = block['block-uid'];
+        window.roamAlphaAPI.updateBlock(
+          {"block": 
+            {"uid": uid,
+            "text-align": "left"}})}
+    },
+    "disable-hotkey": false,
+  })
+  // center justify
+  extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block - Center', 
+    callback: () => {
+      let block = window.roamAlphaAPI.ui.getFocusedBlock()
+      // check if a block is focused
+      if (block !=null) {
+        let uid = block['block-uid'];
+        window.roamAlphaAPI.updateBlock(
+          {"block": 
+            {"uid": uid,
+            "text-align": "center"}})}
+    },
+  "disable-hotkey": false,
+  })
+  // left justify
+  extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block - Right', 
+    callback: () => {
+      let block = window.roamAlphaAPI.ui.getFocusedBlock()
+      // check if a block is focused
+      if (block !=null) {
+        let uid = block['block-uid'];
+        window.roamAlphaAPI.updateBlock(
+          {"block": 
+            {"uid": uid,
+            "text-align": "right"}})}
+    },
+    "disable-hotkey": false,
+  })
 
-  console.log("load example plugin");
+  //  justify
+  extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block', 
+    callback: () => {
+      let block = window.roamAlphaAPI.ui.getFocusedBlock()
+      // check if a block is focused
+      if (block !=null) {
+        let uid = block['block-uid'];
+        window.roamAlphaAPI.updateBlock(
+          {"block": 
+            {"uid": uid,
+            "text-align": "justify"}})}
+    },
+    "disable-hotkey": false,
+  })
 }
 
 function onunload() {
