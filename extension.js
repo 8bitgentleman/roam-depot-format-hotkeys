@@ -23,9 +23,7 @@ async function onload({extensionAPI}) {
                 
                 },
                "disable-hotkey": false,
-               // this is the default hotkey, and can be customized by the user. 
-               // in most cases, you DO NOT want to be setting a default hotkey
-               "default-hotkey": "ctrl-shift-1"})
+})
   // left justify
   extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block - Left ', 
     callback: () => {
@@ -70,7 +68,7 @@ async function onload({extensionAPI}) {
   })
 
   //  justify
-  extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block', 
+  extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block - Full', 
     callback: () => {
       let block = window.roamAlphaAPI.ui.getFocusedBlock()
       // check if a block is focused
@@ -83,10 +81,11 @@ async function onload({extensionAPI}) {
     },
     "disable-hotkey": false,
   })
+  console.log("load hotkey formatting plugin");
 }
 
 function onunload() {
-  console.log("unload example plugin");
+  console.log("unload hotkey formatting plugin");
 }
 
 export default {
