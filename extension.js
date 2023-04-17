@@ -7,17 +7,25 @@ async function onload({extensionAPI}) {
                 // check if a block is focused
                 if (block !=null) {
                   let uid = block['block-uid'];
-                  let viewType = window.roamAlphaAPI.data.pull("[:children/view-type]", [":block/uid", uid])[':children/view-type']
-                  if (viewType==':numbered') {
+                  // default blocks don't always have view-type set if so assume bullet
+                  try{
+                    let viewType = window.roamAlphaAPI.data.pull("[:children/view-type]", [":block/uid", uid])[':children/view-type']
+                    if (viewType==':numbered') {
+                      window.roamAlphaAPI.updateBlock(
+                        {"block": 
+                          {"uid": uid,
+                          "children-view-type": "bullet"}})
+                    } else {
+                      window.roamAlphaAPI.updateBlock(
+                        {"block": 
+                          {"uid": uid,
+                          "children-view-type": "numbered"}})
+                    }
+                  } catch(error){
                     window.roamAlphaAPI.updateBlock(
-                      {"block": 
-                        {"uid": uid,
-                        "children-view-type": "bullet"}})
-                  } else {
-                    window.roamAlphaAPI.updateBlock(
-                      {"block": 
-                        {"uid": uid,
-                        "children-view-type": "numbered"}})
+                        {"block": 
+                          {"uid": uid,
+                          "children-view-type": "numbered"}})
                   }
                 }
                 
