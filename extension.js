@@ -1,4 +1,3 @@
-
 async function onload({extensionAPI}) {
   extensionAPI.ui.commandPalette.addCommand({label: 'Toggle Numbered List', 
                callback: () => {
@@ -32,6 +31,55 @@ async function onload({extensionAPI}) {
                 },
                "disable-hotkey": false,
 })
+
+  // Cycle block view type (bullet -> numbered -> document)
+  extensionAPI.ui.commandPalette.addCommand({
+    label: 'Cycle Block Children View Type',
+    callback: () => {
+      let block = window.roamAlphaAPI.ui.getFocusedBlock()
+      // check if a block is focused
+      if (block != null) {
+        let uid = block['block-uid'];
+        try {
+          let viewType = window.roamAlphaAPI.data.pull("[:children/view-type]", [":block/uid", uid])[':children/view-type']
+          
+          // If viewType is null or not set, treat as bullet
+          if (!viewType || viewType === ':bullet') {
+            window.roamAlphaAPI.updateBlock({
+              "block": {
+                "uid": uid,
+                "children-view-type": "numbered"
+              }
+            })
+          } else if (viewType === ':numbered') {
+            window.roamAlphaAPI.updateBlock({
+              "block": {
+                "uid": uid,
+                "children-view-type": "document"
+              }
+            })
+          } else if (viewType === ':document') {
+            window.roamAlphaAPI.updateBlock({
+              "block": {
+                "uid": uid,
+                "children-view-type": "bullet"
+              }
+            })
+          }
+        } catch(error) {
+          // If there's an error, default to setting as bullet
+          window.roamAlphaAPI.updateBlock({
+            "block": {
+              "uid": uid,
+              "children-view-type": "bullet"
+            }
+          })
+        }
+      }
+    },
+    "disable-hotkey": false,
+  })
+
   // left justify
   extensionAPI.ui.commandPalette.addCommand({label: 'Justify Block - Left ', 
     callback: () => {
